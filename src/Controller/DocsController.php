@@ -51,6 +51,24 @@ class DocsController extends AbstractController
         if (in_array($fileName, $this->swaggerFiles, true)) {
             return $this->redirect($this->getRedirectUrlToSpec($fileName));
         }
+        
+        if ($fileName === 'swagger-initializer.js' && $this->configFile) {
+            $config = $this->directory . DIRECTORY_SEPARATOR . $this->configFile;
+            $newConfig = 'window.onload = function() {
+              //<editor-fold desc="Changeable Configuration Block">
+            
+              // the following lines will be replaced by docker/configurator, when it runs in a docker-container
+              window.ui = SwaggerUIBundle(' . file_get_contents($config) . ');
+            
+              //</editor-fold>
+            };';
+
+            $response = new Response($newConfig, Response::HTTP_OK, [
+                'Content-Type' => 'application/javascript'
+            ]);
+
+            return $response;
+        }
 
         // redirect to the assets dir so that relative links work
         return $this->redirect($this->assetUrlPath . $fileName);
