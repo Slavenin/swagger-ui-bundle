@@ -45,7 +45,7 @@ class DocsController extends AbstractController
         return new Response($contents);
     }
 
-    public function redirectAction(string $fileName): RedirectResponse
+    public function redirectAction(string $fileName): Response
     {
         // redirect to swagger file if that's what we're looking for
         if (in_array($fileName, $this->swaggerFiles, true)) {
